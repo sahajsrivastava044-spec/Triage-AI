@@ -1,0 +1,18 @@
+{
+  "reviewedTickets": 2,
+  "categoryAccuracy": "50.00",
+  "priorityAccuracy": "50.00",
+  "worstCategory": "Technical",
+  "categories": {
+    "Billing": {
+      "reviewed": 1,
+      "mistakes": 0,
+      "accuracy": 100
+    },
+    "Technical": {
+      "reviewed": 1,
+      "mistakes": 1,
+      "accuracy": 0
+    }
+  }
+}
