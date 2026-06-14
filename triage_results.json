@@ -4,54 +4,54 @@
     "category": "Billing",
     "priority": "High",
     "assigned_team": "Billing Team",
-    "summary": "Customer reports being charged twice and requests a refund.",
+    "summary": "Customer was charged twice and needs a refund.",
     "confidence": 0.98
   },
   {
     "id": "T002",
     "category": "Technical",
-    "priority": "High",
-    "assigned_team": "Technical Support Team",
-    "summary": "API returns a 500 internal server error during an upload operation.",
-    "confidence": 0.97
+    "priority": "Critical",
+    "assigned_team": "Technical Support",
+    "summary": "API returns 500 error during upload operation.",
+    "confidence": 0.99
   },
   {
     "id": "T003",
     "category": "Account",
     "priority": "High",
-    "assigned_team": "Account Support Team",
-    "summary": "User is unable to log in after successfully resetting their password.",
-    "confidence": 0.96
+    "assigned_team": "Account Management",
+    "summary": "User unable to login after performing a password reset.",
+    "confidence": 0.97
   },
   {
     "id": "T004",
     "category": "Feature Request",
     "priority": "Low",
     "assigned_team": "Product Team",
-    "summary": "Request for adding dark mode support to the application.",
+    "summary": "Customer requests dark mode support.",
     "confidence": 0.98
   },
   {
     "id": "T005",
     "category": "Billing",
-    "priority": "Medium",
+    "priority": "High",
     "assigned_team": "Billing Team",
-    "summary": "Customer believes the amount on their latest invoice is incorrect.",
-    "confidence": 0.97
+    "summary": "Invoice amount appears to be incorrect.",
+    "confidence": 0.98
   },
   {
     "id": "T006",
     "category": "Technical",
     "priority": "Critical",
-    "assigned_team": "Technical Support Team",
-    "summary": "Application crashes immediately upon attempting to open the dashboard.",
-    "confidence": 0.98
+    "assigned_team": "Technical Support",
+    "summary": "Application crashes when attempting to open the dashboard.",
+    "confidence": 0.99
   },
   {
     "id": "T007",
     "category": "Account",
     "priority": "High",
-    "assigned_team": "Account Support Team",
+    "assigned_team": "Account Management",
     "summary": "User requires assistance to regain access to their account.",
     "confidence": 0.95
   },
@@ -60,7 +60,7 @@
     "category": "Feature Request",
     "priority": "Low",
     "assigned_team": "Product Team",
-    "summary": "Request for a new feature to export data to Excel.",
+    "summary": "Customer requests an 'export to Excel' feature.",
     "confidence": 0.98
   },
   {
@@ -68,15 +68,15 @@
     "category": "Billing",
     "priority": "High",
     "assigned_team": "Billing Team",
-    "summary": "Customer reports that a previously requested refund has not yet been processed.",
-    "confidence": 0.97
+    "summary": "Refund has not been processed as expected.",
+    "confidence": 0.98
   },
   {
     "id": "T010",
     "category": "Technical",
-    "priority": "High",
-    "assigned_team": "Technical Support Team",
-    "summary": "User is unable to establish a connection to the specified API endpoint.",
-    "confidence": 0.96
+    "priority": "Critical",
+    "assigned_team": "Technical Support",
+    "summary": "Unable to establish connection to the API endpoint.",
+    "confidence": 0.99
   }
 ]

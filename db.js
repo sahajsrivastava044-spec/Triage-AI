@@ -1,7 +1,13 @@
+// db.js
+// Initializes the SQLite database for the ticket triage service.
+// This file creates the required tables when the app starts and exports
+// a shared `db` instance for the service modules to use.
+
 const Database = require("better-sqlite3");
 
 const db = new Database("triage.db");
 
+// Tickets store the latest classification and metadata for each support request.
 db.exec(`
 CREATE TABLE IF NOT EXISTS tickets (
     id TEXT PRIMARY KEY,
