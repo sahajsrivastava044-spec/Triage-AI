@@ -1,3 +1,8 @@
+// services/feedback.service.js
+// Handles human reviewer feedback for ticket classifications.
+// This file integrates into the workflow after triage: users can correct category and priority,
+// and the application stores those corrections for later accuracy reporting.
+
 const db = require("../db");
 
 function submitFeedback(
@@ -6,6 +11,7 @@ function submitFeedback(
     correctedPriority,
     reviewerId
 ){
+        // Ensure the ticket exists before accepting feedback.
     const ticket = db.prepare(`
 SELECT *
 FROM tickets
@@ -20,7 +26,8 @@ if(!ticket){
 
 }
 
-const existingFeedback =
+    // Prevent duplicate feedback for the same ticket.
+    const existingFeedback =
 db.prepare(`
 SELECT *
 FROM feedback
@@ -35,20 +42,22 @@ if(existingFeedback){
 
 }
 
-const categoryWrong =
+    // Calculate whether the original model prediction was wrong.
+    const categoryWrong =
 
 ticket.category !==
 correctedCategory
 
 ? 1 : 0;
 
-const priorityWrong =
+    const priorityWrong =
 
 ticket.priority !==
 correctedPriority
 
 ? 1 : 0;
 
+    // Save reviewer corrections and whether category/priority were wrong.
 const insertFeedback =
 db.prepare(`
 INSERT INTO feedback (

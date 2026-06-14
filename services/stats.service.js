@@ -1,3 +1,8 @@
+// services/stats.service.js
+// Provides aggregated system statistics for the triage workflow.
+// This file is part of reporting: it reads from the database and computes
+// totals, averages, distribution, and estimated token cost for the application.
+
 const db = require("../db");
 
 function getStats() {
@@ -26,6 +31,7 @@ function getStats() {
         `).all();
     const distribution = {};
 
+        // Build a category distribution map for dashboard-style stats.
         for(const item of categoryDistribution){
 
             distribution[item.category] = {
@@ -44,7 +50,8 @@ function getStats() {
 
         }
 
-        const tokenStats =
+            // Gather usage metrics from batch records so we can estimate token costs.
+const tokenStats =
 db.prepare(`
 SELECT
 SUM(input_tokens) as inputTokens,
@@ -52,6 +59,8 @@ SUM(output_tokens) as outputTokens
 FROM batches
 `).get();
 
+    // Estimate cost using a simple token pricing model.
+    // Adjust these values if the actual Gemini pricing differs.
 const estimatedCost =
 
 (

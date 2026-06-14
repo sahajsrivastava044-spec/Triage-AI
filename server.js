@@ -1,3 +1,8 @@
+// server.js
+// Entry point for the ticket triage API. This file sets up Express routes, connects service modules,
+// and starts the HTTP server. It powers the main workflow: receive requests, delegate work to
+// services, and return JSON responses.
+
 require("dotenv").config();
 const express = require("express");
 const db = require("./db");
@@ -9,9 +14,11 @@ const {generateAccuracyReport} = require("./services/accuracy.service");
 
 app.use(express.json());
 
+// Root health endpoint. Useful to verify the API is running.
 app.get("/", (req, res) => {
   res.send("Ticket Triage API Running");
 });
+// Main triage endpoint: accepts a batch of tickets, classifies them, and returns results.
 app.post("/triage", async (req,res)=>{
 
     try{
@@ -31,6 +38,7 @@ app.post("/triage", async (req,res)=>{
     }
 
 });
+// Statistics endpoint: returns aggregated metrics for ticket processing and costs.
 app.get("/triage/stats", (req,res)=>{
 
     const stats = getStats();
@@ -38,6 +46,7 @@ app.get("/triage/stats", (req,res)=>{
     res.json(stats);
 
 });
+// Feedback endpoint: records human corrections for a single ticket.
 app.post(
 "/triage/:id/feedback",
 
@@ -70,6 +79,7 @@ app.post(
     }
 
 });
+// Accuracy endpoint: generates a report from submitted feedback.
 app.get(
     "/triage/accuracy",
     (req,res)=>{
@@ -82,43 +92,7 @@ app.get(
     }
 );
 
-app.get("/test-claude", async (req,res)=>{
 
-    try{
-
-        const response = await axios.post(
-            "https://api.anthropic.com/v1/messages",
-            {
-                model: "claude-sonnet-4-20250514",
-                max_tokens: 100,
-                messages:[
-                    {
-                        role:"user",
-                        content:"Say hello"
-                    }
-                ]
-            },
-            {
-                headers:{
-                    "x-api-key": process.env.CLAUDE_API_KEY,
-                    "anthropic-version":"2023-06-01",
-                    "content-type":"application/json"
-                }
-            }
-        );
-
-        res.json(response.data);
-
-    }
-    catch(error){
-
-        res.status(500).json({
-            error:error.response?.data || error.message
-        });
-
-    }
-
-});
 
 const PORT = 3000;
 

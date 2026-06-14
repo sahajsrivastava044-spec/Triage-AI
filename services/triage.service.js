@@ -1,7 +1,14 @@
+// services/triage.service.js
+// Responsible for classifying support tickets using Google Gemini.
+// This file is part of the main workflow: it receives incoming tickets from the API,
+// sends them to the model in a single prompt, parses the JSON response, stores results,
+// and falls back to a simple rule-based classifier when Gemini is unavailable.
+
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const db = require("../db");
 const fs = require("fs");
 
+// Use either GEMINI_API_KEY or GOOGLE_API_KEY from .env. If neither exists, fail early.
 const geminiApiKey =
     process.env.GEMINI_API_KEY ||
     process.env.GOOGLE_API_KEY;
@@ -14,10 +21,12 @@ if (!geminiApiKey) {
     );
 }
 
+// Create a Google Gemini client once and reuse it for all classify requests.
 const genAI = new GoogleGenerativeAI(geminiApiKey);
 
 async function classifyTickets(tickets) {
 
+    // Track how long the batch takes so we can store performance metrics.
     const start = Date.now();
 
     let results = [];
@@ -26,6 +35,8 @@ async function classifyTickets(tickets) {
 
     try {
 
+        // Create a generative model instance for Gemini.
+        // `gemini-2.5-flash` is the chosen model for deterministic classification output.
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash"
         });
@@ -68,6 +79,7 @@ Tickets:
 ${JSON.stringify(tickets, null, 2)}
 `;
 
+        // Send the prompt to Gemini and parse the returned JSON string.
         const response =
             await model.generateContent(prompt);
 
@@ -79,6 +91,7 @@ ${JSON.stringify(tickets, null, 2)}
             .replace(/```/g, "")
             .trim();
 
+        // Parse the model output into a JS array of ticket classifications.
         results = JSON.parse(cleaned);
 
         console.log(
@@ -87,6 +100,7 @@ ${JSON.stringify(tickets, null, 2)}
 
     } catch (error) {
 
+        // If Gemini fails, log the error and use the built-in fallback.
         console.log("GEMINI ERROR:");
 
         console.log(error.message);
@@ -95,6 +109,7 @@ ${JSON.stringify(tickets, null, 2)}
             "Gemini unavailable, using fallback classifier"
         );
 
+        // Fallback classifier: simple keyword rules to keep the service working even without Gemini.
         results = tickets.map(ticket => {
 
             const text =
@@ -174,6 +189,7 @@ ${JSON.stringify(tickets, null, 2)}
         });
     }
 
+    // Calculate end-to-end processing time for the whole batch.
     const processingTime =
         Date.now() - start;
 
@@ -194,6 +210,8 @@ ${JSON.stringify(tickets, null, 2)}
         outputTokens
     );
 
+    // Save each ticket classification in the tickets table.
+    // This ensures we can review results later and support feedback workflows.
     const insertTicket = db.prepare(`
         INSERT OR REPLACE INTO tickets (
             id,
@@ -232,6 +250,7 @@ ${JSON.stringify(tickets, null, 2)}
         );
     }
 
+    // Persist the latest batch results to JSON so they can be inspected outside the database.
     fs.writeFileSync(
         "triage_results.json",
         JSON.stringify(

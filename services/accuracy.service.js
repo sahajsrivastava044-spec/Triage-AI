@@ -1,6 +1,12 @@
+// services/accuracy.service.js
+// Computes model accuracy statistics from human feedback.
+// This file is used after feedback is submitted to produce performance metrics,
+// identify the worst-performing category, and save a report JSON file.
+
 const db = require("../db");
 
 function generateAccuracyReport(){
+    // Aggregate review counts and mistake totals from the feedback table.
 const overall = db.prepare(`
 SELECT
 
@@ -41,6 +47,7 @@ overall.reviewed === 0
 ) * 100
 ).toFixed(2);
 
+    // Compute per-category performance so we can identify the weakest category.
 const categoryPerformance =
 db.prepare(`
 SELECT
@@ -58,6 +65,7 @@ GROUP BY original_category
 
 const categories = {};
 
+// Track the category with the lowest accuracy so we can include it in the report.
 let worstCategory = null;
 let lowestAccuracy = 101;
 
@@ -73,6 +81,7 @@ for(const item of categoryPerformance){
 
     if(accuracy < lowestAccuracy){
 
+        // Remember the category with the lowest accuracy.
         lowestAccuracy = accuracy;
 
         worstCategory =
@@ -112,6 +121,7 @@ const report = {
 
 };
 
+    // Write the accuracy report to disk for review and reporting.
 fs.writeFileSync(
     "accuracy_report.json",
     JSON.stringify(
